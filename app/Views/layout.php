@@ -1,3 +1,10 @@
+<?php
+$hlm = "Home";
+if (uri_string() != "") {
+    $hlm = ucwords(uri_string());
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +12,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Tables / Data - NiceAdmin Bootstrap Template</title>
+    <title>- Toko - <?php echo $hlm ?></title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
@@ -56,9 +63,14 @@
             <h1>Data Tables</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item">Tables</li>
-                    <li class="breadcrumb-item active">Data</li>
+                    <li class="breadcrumb-item">Home</li>
+                    <?php
+                    if ($hlm != "Home") {
+                        ?>
+                        <li class="breadcrumb-item"><?php echo $hlm ?></li>
+                        <?php
+                    }
+                    ?>
                 </ol>
             </nav>
         </div><!-- End Page Title -->
@@ -69,20 +81,13 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Datatables</h5>
-                            <p>Add lightweight datatables to your project with using the <a
-                                    href="https://github.com/fiduswriter/Simple-DataTables" target="_blank">Simple
-                                    DataTables</a> library. Just add <code>.datatable</code> class name to any table you
-                                wish to conver to a datatable</p>
-
-                            <!-- Table with stripped rows -->
+                            <h5 class="card-title"><?php echo $hlm ?></h5>
                             <?= $this->renderSection('content') ?>
-                            <!-- End Table with stripped rows -->
-
                         </div>
                     </div>
-
                 </div>
+
+            </div>
             </div>
         </section>
 
