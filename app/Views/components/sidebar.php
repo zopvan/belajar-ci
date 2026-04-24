@@ -23,7 +23,7 @@
             <li class="nav-item">
                 <a class="nav-link <?php echo (uri_string() == 'product') ? "" : "collapsed" ?>" href="product">
                     <i class="bi bi-receipt"></i>
-                    <span>Product</span>
+                    <span>produk</span>
                     </a>
         <?php
         }
