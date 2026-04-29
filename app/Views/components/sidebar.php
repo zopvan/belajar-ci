@@ -23,7 +23,13 @@
             <li class="nav-item">
                 <a class="nav-link <?php echo (uri_string() == 'product') ? "" : "collapsed" ?>" href="product">
                     <i class="bi bi-receipt"></i>
-                    <span>produk</span>
+                    <span>Produk</span>
+                    </a>
+            <!-- munculkan menu profile -->
+            <li class="nav-item">
+                <a class="nav-link <?php echo (uri_string() == 'profile') ? "" : "collapsed" ?>" href="profile">
+                    <i class="bi bi-people"></i>
+                    <span>Profile</span>
                     </a>
         <?php
         }
