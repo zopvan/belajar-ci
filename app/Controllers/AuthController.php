@@ -40,8 +40,8 @@ class AuthController extends BaseController
                 session()->setFlashdata('failed', 'Username Tidak Ditemukan');
                 return redirect()->back();
             }
-        } else {
-            return view('v_login');
+            } else {
+                return view('v_login');
         }
     }
 
