@@ -1,5 +1,6 @@
 <?= $this->extend('layout') ?>
 <?= $this->section('content') ?>
+<?php d($products)?>
 <table class="table datatable">
     <thead>
         <tr>
