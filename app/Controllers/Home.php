@@ -1,18 +1,19 @@
 <?php
 
 namespace App\Controllers;
-use App\Models\ProductModel; 
+
+use App\Models\ProductModel;
 
 class Home extends BaseController
 {
     protected $productModel;
 
     function __construct(){
-    $this->productModel = new ProductModel();
+        helper(['number', 'form']);
+        $this->productModel = new ProductModel();
     }
 
-    public function index(): string
-    {
+    public function index(): string{
         $data = [
             'asd' => 'asdf'
         ];
