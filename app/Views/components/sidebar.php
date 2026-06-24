@@ -24,17 +24,26 @@
                 <a class="nav-link <?php echo (uri_string() == 'product') ? "" : "collapsed" ?>" href="product">
                     <i class="bi bi-receipt"></i>
                     <span>Produk</span>
-                    </a>
+                </a>
+            </li><!-- End Produk Nav -->
+
+            <li class="nav-item">
+                <a class="nav-link <?php echo (uri_string() == 'history') ? "" : "collapsed" ?>" href="history">
+                    <i class="bi bi-person"></i>
+                    <span>History</span>
+                </a>
+            </li><!-- End History Nav -->
+
             <!-- munculkan menu profile -->
             <li class="nav-item">
                 <a class="nav-link <?php echo (uri_string() == 'profile') ? "" : "collapsed" ?>" href="profile">
                     <i class="bi bi-people"></i>
                     <span>Profile</span>
-                    </a>
-        <?php
+                </a>
+            <?php
         }
-        ?>
-        </li><!-- End Produk Nav -->
+            ?>
+            </li><!-- End Produk Nav -->
     </ul>
 
 </aside><!-- End Sidebar-->
