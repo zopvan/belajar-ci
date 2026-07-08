@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var int|float $total
+ * @var array $items
+ */
+?>
 <?= $this->extend('layout') ?>
 <?= $this->section('content') ?>
 
@@ -48,6 +54,19 @@
                 'readonly' => true
             ]) ?>
         </div>
+
+        <!-- TAMBAHAN: Input Kode Voucher -->
+        <div class="col-12">
+            <?= form_label('Kode Voucher', 'voucher_code', ['class' => 'form-label']) ?>
+            <?= form_input([
+                'name'  => 'voucher_code',
+                'id'    => 'voucher_code',
+                'class' => 'form-control',
+                'placeholder' => 'Contoh: PROMO2026'
+            ]) ?>
+            <small class="text-muted">Tersedia: PROMO2025 (10%), PROMO2026 (15%), AKHIRTAHUN (25%)</small>
+        </div>
+
         <div class="col-12">
             <?= form_submit(
                 'submit',
@@ -88,9 +107,28 @@
                     <td>Subtotal</td>
                     <td><?= number_to_currency($total, 'IDR') ?></td>
                 </tr>
+
+                <!-- TAMBAHAN: Rincian Promo -->
                 <tr>
                     <td colspan="2"></td>
-                    <td>Total</td>
+                    <td class="text-danger">Diskon Voucher <span id="diskon_persen"></span></td>
+                    <td class="text-danger"><span id="diskon_nominal">-IDR 0</span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td>Biaya Jasa</td>
+                    <td><span id="biaya_jasa">IDR 0</span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="text-success">Free Mouse</td>
+                    <td class="text-success"><span id="free_mouse">-IDR 0</span></td>
+                </tr>
+                <!-- Akhir Tambahan Promo -->
+
+                <tr>
+                    <td colspan="2"></td>
+                    <td>Total (incl. Ongkir)</td>
                     <td><span id="total"><?= number_to_currency($total, 'IDR') ?></span></td>
                 </tr>
             </tbody>
@@ -108,12 +146,44 @@
         hitungTotal();
 
         function hitungTotal() {
-            let total = subtotal + ongkir;
+            // Tangkap value voucher
+            let voucher = $('#voucher_code').val();
+            if (voucher) { voucher = voucher.toUpperCase(); } else { voucher = ''; }
 
+            // 1. Hitung Biaya Jasa
+            let biayaJasa = (subtotal <= 10000000) ? (subtotal * 0.01) : (subtotal * 0.02);
+            
+            // 2. Hitung Diskon Voucher
+            let diskon = 0;
+            let diskonPersen = 0;
+            if (voucher === 'PROMO2025') { diskon = subtotal * 0.10; diskonPersen = 10; }
+            else if (voucher === 'PROMO2026') { diskon = subtotal * 0.15; diskonPersen = 15; }
+            else if (voucher === 'AKHIRTAHUN') { diskon = subtotal * 0.25; diskonPersen = 25; }
+            
+            // 3. Hitung Free Mouse
+            let freeMouse = (subtotal >= 15000000) ? 150000 : 0;
+
+            // 4. Kalkulasi Total
+            let subtotalBaru = subtotal - diskon + biayaJasa - freeMouse;
+            let total = subtotalBaru + ongkir;
+
+            // 5. Update UI & Input
             $("#ongkir").val(ongkir);
+            
+            // Render text promo
+            $("#diskon_persen").text(diskonPersen > 0 ? `(${diskonPersen}%)` : '');
+            $("#diskon_nominal").text(`-IDR ${diskon.toLocaleString('id-ID')}`);
+            $("#biaya_jasa").text(`IDR ${biayaJasa.toLocaleString('id-ID')}`);
+            $("#free_mouse").text(`-IDR ${freeMouse.toLocaleString('id-ID')}`);
+            
             $("#total").text(`IDR ${total.toLocaleString('id-ID')}`);
             $("#total_harga").val(total);
         }
+
+        // Trigger fungsi saat user mengetik kode voucher
+        $('#voucher_code').on('keyup', function() {
+            hitungTotal();
+        });
 
         $('#kelurahan').select2({
             placeholder: 'Cari daerah tujuan',

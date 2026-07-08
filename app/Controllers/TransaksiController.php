@@ -48,7 +48,7 @@ class TransaksiController extends BaseController
         session()->setFlashdata(
             'success',
             'Produk berhasil ditambahkan ke keranjang. 
-	    <a href="' . base_url('keranjang') . '">Lihat</a>'
+        <a href="' . base_url('keranjang') . '">Lihat</a>'
         );
 
         return redirect()->to(base_url('/'));
@@ -100,15 +100,10 @@ class TransaksiController extends BaseController
 
     public function checkout()
     {
-        $service = new RajaOngkirService();
-        $response = $service->getDestination('semarang');
-        $response2 = $service->getCost('64999', '65042', '1000', 'jne');
-
+        // Hanya mengirimkan data keranjang ke view
         $data = [
             'items' => $this->cart->contents(),
             'total' => $this->cart->total(),
-            'response' => $response,
-            'response2' => $response2
         ];
 
         return view('v_checkout', $data);
@@ -172,19 +167,33 @@ class TransaksiController extends BaseController
         $db = \Config\Database::connect();
         $db->transStart();
 
-        $subtotal = 0;
-        foreach ($cartItems as $item) {
-            $subtotal += $item['qty'] * $item['price'];
-        }
-
+        // 1. Ambil subtotal murni dari keranjang
+        $subtotal = $this->cart->total();
+        
+        // 2. Tangkap input form
         $ongkir = (int) $this->request->getPost('ongkir');
+        $voucher_code = $this->request->getPost('voucher_code');
 
+        // 3. Proses Kalkulasi Promo Akhir Tahun
+        $biaya_jasa = $this->hitung_biaya_jasa($subtotal);
+        $diskon_voucher = $this->hitung_diskon_voucher($subtotal, $voucher_code);
+        $free_mouse = $this->hitung_free_mouse($subtotal);
+
+        // 4. Hitung Grand Total
+        $subtotal_baru = $subtotal - $diskon_voucher + $biaya_jasa - $free_mouse;
+        $grand_total = $subtotal_baru + $ongkir;
+
+        // 5. Masukkan ke array transaksi beserta field baru
         $transaction = [
-            'username'    => $this->request->getPost('username'),
-            'alamat'      => $this->request->getPost('alamat'),
-            'ongkir'      => $ongkir,
-            'total_harga' => $subtotal + $ongkir,
-            'status'      => 0,
+            'username'       => $this->request->getPost('username'),
+            'alamat'         => $this->request->getPost('alamat'),
+            'ongkir'         => $ongkir,
+            'total_harga'    => $grand_total,
+            'status'         => 0,
+            'biaya_jasa'     => $biaya_jasa,
+            'voucher_code'   => $voucher_code,
+            'diskon_voucher' => $diskon_voucher,
+            'free_mouse'     => $free_mouse,
         ];
 
         // insert transaction
@@ -216,6 +225,7 @@ class TransaksiController extends BaseController
         $this->cart->destroy();
         return redirect()->to(base_url());
     }
+
     public function history()
     {
         $username = session()->get('username');
@@ -232,5 +242,30 @@ class TransaksiController extends BaseController
         ];
 
         return view('v_history', $data);
+    }
+
+    private function hitung_biaya_jasa($total_harga)
+    {
+        if ($total_harga <= 10000000) {
+            return $total_harga * 0.01;
+        }
+        return $total_harga * 0.02;
+    }
+
+    private function hitung_diskon_voucher($total_harga, $voucher_code)
+    {
+        $voucher_code = strtoupper(trim($voucher_code ?? ''));
+        if ($voucher_code === 'PROMO2025') return $total_harga * 0.10;
+        if ($voucher_code === 'PROMO2026') return $total_harga * 0.15;
+        if ($voucher_code === 'AKHIRTAHUN') return $total_harga * 0.25;
+        return 0;
+    }
+
+    private function hitung_free_mouse($total_harga)
+    {
+        if ($total_harga >= 15000000) {
+            return 150000;
+        }
+        return 0;
     }
 }

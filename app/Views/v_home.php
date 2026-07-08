@@ -31,7 +31,7 @@ if (session()->getFlashData('success')) {
         </div>
     <?php endforeach ?>
 </div>
-<table class="table datatable">
+<!-- <table class="table datatable">
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -78,5 +78,5 @@ if (session()->getFlashData('success')) {
             <td>2011-04-19</td>
         </tr>
     </tbody>
-</table>
+</table> -->
 <?= $this->endSection() ?>
