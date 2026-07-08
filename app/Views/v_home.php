@@ -23,7 +23,7 @@ if (session()->getFlashData('success')) {
             <div class="card">
                 <div class="card-body">
                     <img src="<?= base_url() . "img/" . $item['foto'] ?>" alt="..." width="50%">
-                    <h5 class="card-title"><?= $item['nama'] ?><br><?= $item['harga'] ?><?= number_to_currency($item['harga'], 'IDR') ?></h5>
+                    <h5 class="card-title"><?= $item['nama'] ?><br><?= number_to_currency($item['harga'], 'IDR') ?></h5>
                     <button type="submit" class="btn btn-info rounded-pill">Beli</button>
                 </div>
             </div>

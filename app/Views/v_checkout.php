@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int|float $total
  * @var array $items
@@ -146,36 +147,41 @@
         hitungTotal();
 
         function hitungTotal() {
-            // Tangkap value voucher
             let voucher = $('#voucher_code').val();
-            if (voucher) { voucher = voucher.toUpperCase(); } else { voucher = ''; }
+            if (voucher) {
+                voucher = voucher.toUpperCase();
+            } else {
+                voucher = '';
+            }
 
-            // 1. Hitung Biaya Jasa
             let biayaJasa = (subtotal <= 10000000) ? (subtotal * 0.01) : (subtotal * 0.02);
-            
-            // 2. Hitung Diskon Voucher
+
             let diskon = 0;
             let diskonPersen = 0;
-            if (voucher === 'PROMO2025') { diskon = subtotal * 0.10; diskonPersen = 10; }
-            else if (voucher === 'PROMO2026') { diskon = subtotal * 0.15; diskonPersen = 15; }
-            else if (voucher === 'AKHIRTAHUN') { diskon = subtotal * 0.25; diskonPersen = 25; }
-            
-            // 3. Hitung Free Mouse
+            if (voucher === 'PROMO2025') {
+                diskon = subtotal * 0.10;
+                diskonPersen = 10;
+            } else if (voucher === 'PROMO2026') {
+                diskon = subtotal * 0.15;
+                diskonPersen = 15;
+            } else if (voucher === 'AKHIRTAHUN') {
+                diskon = subtotal * 0.25;
+                diskonPersen = 25;
+            }
+
             let freeMouse = (subtotal >= 15000000) ? 150000 : 0;
 
-            // 4. Kalkulasi Total
             let subtotalBaru = subtotal - diskon + biayaJasa - freeMouse;
             let total = subtotalBaru + ongkir;
 
-            // 5. Update UI & Input
             $("#ongkir").val(ongkir);
-            
+
             // Render text promo
             $("#diskon_persen").text(diskonPersen > 0 ? `(${diskonPersen}%)` : '');
             $("#diskon_nominal").text(`-IDR ${diskon.toLocaleString('id-ID')}`);
             $("#biaya_jasa").text(`IDR ${biayaJasa.toLocaleString('id-ID')}`);
             $("#free_mouse").text(`-IDR ${freeMouse.toLocaleString('id-ID')}`);
-            
+
             $("#total").text(`IDR ${total.toLocaleString('id-ID')}`);
             $("#total_harga").val(total);
         }
